@@ -1,0 +1,43 @@
+#!/bin/bash
+
+# Config
+emulatorPath='/Users/aiello/Library/Android/sdk/emulator/emulator'
+
+# Check if file exist
+if [ ! -f "$emulatorPath" ]; then
+	echo "ok"
+	echo "$emulatorPath dosen't exist"
+	exit 1
+fi
+# Vars
+avdList=($($emulatorPath -list-avds))
+avdListLen=${#avdList[@]}
+avdListMaxIndex=$[${#avdList[@]}-1]
+selAvdName=""
+
+listAvd(){
+	echo "Select emulator to start:"
+	for ((i=0;i<$avdListLen;i++));do
+		echo "	" $i")	" ${avdList[$i]}
+	done
+	echo ""
+	inputNum
+}
+
+inputNum(){
+	echo -n "Input index: "
+	read i
+	if [ "$i" -ge "0" ] && [ "$i" -le $avdListMaxIndex ] ;then
+	 	selAvdName=${avdList[$i]}
+	 	startAvd
+	else 
+		echo "Input number between 0 and" $avdListMaxIndex
+		inputNum
+	fi
+}
+
+startAvd(){
+	nohup $emulatorPath -avd $selAvdName &
+}
+
+listAvd
